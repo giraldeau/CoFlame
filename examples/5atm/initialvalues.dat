@@ -1,0 +1,52 @@
+0        !IREST flag (0 = start calculation from scratch, 1 = continue from a rest.dat file)     
+1.0d0       !start height of fuel tube taper. Must be less than fuel tube height. (negative for no CHT, zero for no taper)
+0.30      !initial outer radius of fuel tube (meaningless if no taper)
+0.200     !initial inner radius of fuel tube (meaningless if no taper)
+0.30      !final outer radius of fuel tube (or radius if no taper)
+0.200      !final inner radius of fuel tube (or radius if no taper)
+11.40d0          !inlet air (oxidizer) velocity 			(Fuel in IDF)
+11.40d0           !inlet fuel velocity 					(Oxidizer in IDF)
+300           !inlet air (oxidizer) temperature 		(Fuel in IDF)
+300           !inlet fuel temperature 					(Oxidizer in IDF)
+14      !O2(14)  !species index of the first component of the fuel 	(Oxidizer in IDF)		
+0.7d0           !mole fraction of the first component of the fuel	(Oxidizer in IDF)	OI
+46      !N2     !species index of the 2nd component of the fuel		(Oxidizer in IDF)	
+0.3d0           !mole fraction of the 2nd component of the fuel		(Oxidizer in IDF)
+1 		    !species index of the 3rd component of the fuel		(Oxidizer in IDF)
+0           !mole fraction of the 3rd component of the fuel		(Oxidizer in IDF)
+1           !species index of the 4th component of the fuel		(Oxidizer in IDF)
+0           !mole fraction of the 4th component of the fuel		(Oxidizer in IDF)
+1           !species index of the 5th component of the fuel		(Oxidizer in IDF)
+0           !mole fraction of the 5th component of the fuel		(Oxidizer in IDF)
+1           !species index of the 6th component of the fuel		(Oxidizer in IDF)
+0           !mole fraction of the 6th component of the fuel		(Oxidizer in IDF)
+2       !ch4(2)    !species index of the first component of the oxidizer	 (O2)		(Fuel in IDF)
+0.43 !0.80d0           !mole fraction of the first component of the oxidizer (OI)		(Fuel in IDF)
+19           !species index of the 2nd component of the oxidizer	 (CO2)			(Fuel in IDF)
+0.57 !0.20d0 -> CO2          !mole fraction of the 2nd component of the oxidizer	 (1-OI)			(Fuel in IDF)
+90      	!DME     !species index of the 3rd component of the oxidizer			(Fuel in IDF)
+0.00d0         	!mole fraction of the 3rd component of the oxidizer			(Fuel in IDF)
+0          !flag to print the initial solution results files 
+
+! NDF BURNER
+!	outer	0.632
+!	inner	0.545
+! IDF BURNER
+!	outer	0.561
+!	inner 	0.560
+!
+!VELOCIDADES NDF H2O
+!
+!	OI	%H2O	VFUEL		VOX
+!	21	10	2.250d0		29.199d0
+!	21	05	2.250d0		27.848d0
+!	21	00	2.250d0		26.640d0
+!	19	10	2.250d0		29.209d0
+!	19	05	2.250d0		27.856d0
+!	19	00	2.250d0		26.646d0
+!
+!VELOCIDADES IDF R. DEMARCO ET AL. FUEL 212 (2018)
+!
+!	OI	VFUEL		VOX
+!	21	7.16		46.69
+

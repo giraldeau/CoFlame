@@ -1,0 +1,159 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""Script to convert CoFlame results from the tec format to VTK. Allows to open
+   the results in ParaView.
+"""
+
+import numpy as np
+import os
+import re
+import math
+import vtk
+
+def test_re():
+    import re
+
+    l1 = ' TITLE ="Species"'
+    l2 = ' VARIABLES ="r (cm)","z (cm)","U","V","T","Density","Pressure"'
+    l3 = ' ZONE T="Species", I =          83 , J =         162 , F =POINT'
+
+    m1 = re.match(r'\s*TITLE\s*=\s*"(.*)"', l1, re.I)
+    print(m1.group(1))
+
+    m2 = re.match(r'\s*VARIABLES\s*=\s*(.*)', l2, re.I)
+    r2 = re.compile(r'\"([^\"]*)\"')
+    g2 = r2.finditer(m2.group(1))
+
+    fields = []
+    for i, m in enumerate(g2):
+        fields.append(m.group(1))
+
+    print(fields)
+
+    r3 = re.search(r'I\s*=\s*([0-9]+)', l3, re.I)
+    print(r3.group(1))
+    r4 = re.search(r'J\s*=\s*([0-9]+)', l3, re.I)
+    print(r4.group(1))
+
+def extract_coords(fields, data, dims):
+    cx = 0
+    cy = 1
+    x = np.zeros(dims[0])
+    y = np.zeros(dims[1])
+    for i in range(dims[0]):
+        x[i] = df[i,cx]
+
+    for i in range(dims[1]):
+        y[i] = df[i * dims[0],cy]
+
+    return (x, y)
+
+def make_vtk(fields, data, x, y, out):
+
+    xDim = len(x)
+    yDim = len(y)
+
+    xCoords = vtk.vtkDoubleArray()
+    yCoords = vtk.vtkDoubleArray()
+    for i in range(xDim):
+        xCoords.InsertNextValue(x[i])
+    for i in range(yDim):
+        yCoords.InsertNextValue(y[i])
+        
+    grid = vtk.vtkRectilinearGrid()
+    grid.SetDimensions(len(x), len(y), 1)
+    grid.SetXCoordinates(xCoords)
+    grid.SetYCoordinates(yCoords)
+
+    for col, field in enumerate(fields):
+        array = vtk.vtkDoubleArray()
+        array.SetName(field)
+        array.SetNumberOfComponents(1)
+        array.SetNumberOfTuples(grid.GetNumberOfPoints())
+        
+        for row in range(grid.GetNumberOfPoints()):
+            array.SetValue(row, data[row,col])
+
+        grid.GetPointData().AddArray(array)
+
+    writer = vtk.vtkRectilinearGridWriter()
+    writer.SetInputData(grid)
+    writer.SetFileName(out)
+    writer.Write()
+    
+    return grid
+
+def parse_fields(line):
+    m = re.match(r'\s*VARIABLES\s*=\s*(.*)', line, re.I)
+    r = re.compile(r'\"([^\"]*)\"')
+    g = r.finditer(m.group(1))
+
+    fields = []
+    for i, m in enumerate(g):
+        fields.append(m.group(1))
+    return fields
+
+def load_tec(fname):
+    arrays = []
+    fpre = re.compile(r'(?P<f1>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]{1,2}))|(?P<f2>(?P<v>[-+]?[0-9]*\.?[0-9]+)(?P<e>[-+][0-9]{3}))')
+    fpre2 = re.compile(r'')
+    fields = []
+    dims = (0, 0)
+    with open(fname, 'r') as fd:
+        for idx, line in enumerate(fd.readlines()):
+            if idx == 0:
+                # TITLE
+                pass
+            elif idx == 1:
+                # VARIABLES
+                fields = parse_fields(line)
+            elif idx == 2:
+                # ZONE
+                r3 = re.search(r'I\s*=\s*([0-9]+)', line, re.I)
+                i = int(r3.group(1))
+                r4 = re.search(r'J\s*=\s*([0-9]+)', line, re.I)
+                j = int(r4.group(1))
+                dims = (i, j)
+            else:
+                row = []
+                for s in line.split():
+                    m = fpre.match(s)
+                    if not m:
+                        raise ValueError("Error at line {}".format(idx+1))
+                    val = 0
+                    if m.group('f1'):
+                        val = float(m.group("f1"))
+                    elif m.group('f2'):
+                        v = m.group('v')
+                        e = m.group('e')
+                        val = float(v) * math.pow(10, float(e))
+                    else:
+                        raise ValueError("Error at line {}".format(idx+1))
+                    row.append(val)
+                arrays.append(row)
+
+    nb_fields = len(fields)
+    arrays = np.concatenate(arrays)
+    df = np.reshape(arrays, (-1, nb_fields))
+    
+    return (fields, df, dims)
+
+if __name__=="__main__":
+    import argparse
+    from pathlib import Path
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input')
+    args = parser.parse_args()
+    
+    out = Path(args.input).with_suffix(".vtk").as_posix()
+
+    print("loading")
+    (fields, df, dims) = load_tec(args.input)
+    (x, y) = extract_coords(fields, df, dims)
+    
+    print("converting")
+    grid = make_vtk(fields, df, x, y, out)
+    
+    print(grid)

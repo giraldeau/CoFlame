@@ -1,0 +1,29 @@
+0.8d-6	   !DT (timestep to be taken)
+1          !LSOLVE(1) = U
+1          !LSOLVE(2) = V
+1          !LSOLVE(3) = PC
+1          !LSOLVE(4) = Species
+1          !LSOLVE(5) = Soot
+1          !LSOLVE(6) = Temperature
+50000      !total number of timesteps to be taken
+500        !how often results files are printed
+1          !write a detailed soot results file
+3          !mechanism selection (1=DLR-2009 2=DLR-Dworkin 3=DLR-Chernov) (change file in main program code)
+1          !SootModel (1=Section,2=2-eq,3=2-eq with Benzene Inception)
+0.150d0    !Alpha_surf. If =5, use functional form
+35         !Number of sections in the sectional model (35 or 16)	!Orig: 35
+2.35       !Spacing factor for the sections				!Orig: 2.35
+5.0d0      !Operating pressure (in atmospheres)
+10         !L3, number of CVs in the axial (x) direction per CPU
+81         !M3, number of CVs in the radial (y) direction
+1.0d-5     !DTmax, maximum timestep that is allowable
+10000      !minimum number of iterations prior to increasing the timestep
+1d-5       !minimum slope of conservation variables for automatic timestepping
+100        !factor that adjusts the slope target for autotimestepping
+0          !sets whether the outer radial boundary is a wall, or free slip condition (1=wall, else = free slip)
+
+!IDF flame data
+!
+!
+!
+

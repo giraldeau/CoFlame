@@ -1,0 +1,10 @@
+0.0275      !DX1 - unstretched/compressed grid spacing in the x (axial) direction
+-1.0         !Shrinkstart - when the grid spcaing begins to shrink to DX1
+0.0         !Shrinkend - when the grid spacing should be DX1       
+0.894       	!Shrinkfac - factor that controls rate of shrinking
+5.000       !XExpandstart - axial distance from bottom of domain when grid spacing starts increasing
+1.05       !XSTRETCHFAC  - rate of increase of grid spacing
+0.021        !DY1 - initial grid spacing in the y (radial) direction
+1.04      !YSTRETCHFAC - rate at which grid spacing expands in the radial direction
+55          !YEXPANDSTART - J index of when grid starts expanding in radial direction
+-1.0        !TUBEEND - axial distance at which the exit of fuel tube is reached
